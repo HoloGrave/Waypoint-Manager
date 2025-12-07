@@ -28,11 +28,10 @@ public class EditorController implements Initializable {
         if(descField.getText().length() > 254) {errors.add(2);}
         try{
             LocalDateTime curTime = LocalDateTime.now();
-            waypoint w = new waypoint(AppState.getLastIndex(),nameField.getText(),descField.getText(),
+            waypoint w = new waypoint(AppState.getIndex(),nameField.getText(),descField.getText(),
                     Double.parseDouble(xCoordField.getText()),Double.parseDouble(yCoordField.getText()),Double.parseDouble(zCoordField.getText()),
                     curTime);
-            int index = AppState.getIndex();
-            AppState.editWaypoint(w,index);
+            AppState.editWaypoint(w);
         }
         catch (Exception e){
             System.out.println("Other Problem");

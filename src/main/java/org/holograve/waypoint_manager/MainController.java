@@ -45,6 +45,7 @@ public class MainController implements Initializable {
             editStage.initOwner(editBtn.getScene().getWindow());
             editStage.setTitle("Edit Waypoint");
 
+            AppState.setIndex(AppState.getWaypointList().get(firstLV.getSelectionModel().getSelectedIndex()).id());
             editStage.showAndWait();
             this.firstLV.setItems(FXCollections.observableArrayList(AppState.getWaypointList()));
         }
@@ -56,7 +57,7 @@ public class MainController implements Initializable {
     @FXML
     void deleteValue(ActionEvent event) {
         //simply delete the value from the database and refresh the data
-        int selectedItem = firstLV.getSelectionModel().getSelectedIndex();
+        int selectedItem = AppState.getWaypointList().get(firstLV.getSelectionModel().getSelectedIndex()).id();
         if(selectedItem > -1) {
             AppState.dropWaypoint(selectedItem);
             //refresh the list with new values

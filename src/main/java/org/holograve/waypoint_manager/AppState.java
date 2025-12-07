@@ -42,10 +42,39 @@ public class AppState {
     }
 
     public static void addWaypoint(waypoint w){
-        //add to database
+        try(Connection conn = getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO waypoint (" +
+                            "idwaypoint, name, description, xcoord, ycoord, zcoord, updateTime) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?)"
+            );
+
+            int nextId = getLastIndex();
+            ps.setInt(1, nextId);
+            ps.setString(2, w.name());
+            ps.setString(3, w.desc());
+            ps.setDouble(4, w.xCoord());
+            ps.setDouble(5, w.yCoord());
+            ps.setDouble(6, w.zCoord());
+            ps.setTimestamp(7, Timestamp.valueOf(w.updateTime()));
+
+            ps.executeUpdate();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
     }
     public static void dropWaypoint(int index){
-        //drop from database
+        try(Connection conn = getConnection()) {
+            String query = "DELETE FROM waypoint WHERE idwaypoint = ?";
+
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, index);
+            ps.executeUpdate();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
     }
     public static void setIndex(int index){selectedRecord = index;}
 
@@ -73,7 +102,32 @@ public class AppState {
      }
      return tSize;
     }
-    public static void editWaypoint(waypoint w, int index){
-        //todo
+    public static void editWaypoint(waypoint w){
+        try(Connection conn = getConnection()) {
+            String query = "UPDATE waypoint SET " +
+                    "name = ?, " +
+                    "description = ?, " +
+                    "xcoord = ?, " +
+                    "ycoord = ?, " +
+                    "zcoord = ?, " +
+                    "updateTime = ? " +
+                    "WHERE idwaypoint = ? " +
+                    "LIMIT 1";
+
+            PreparedStatement ps = conn.prepareStatement(query);
+
+            ps.setString(1, w.name());
+            ps.setString(2, w.desc());
+            ps.setDouble(3, w.xCoord());
+            ps.setDouble(4, w.yCoord());
+            ps.setDouble(5, w.zCoord());
+            ps.setTimestamp(6, Timestamp.valueOf(w.updateTime()));
+            ps.setInt(7, w.id());
+
+            ps.executeUpdate();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 }
