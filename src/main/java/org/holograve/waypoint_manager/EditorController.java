@@ -7,6 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class EditorController implements Initializable {
@@ -21,6 +23,21 @@ public class EditorController implements Initializable {
     @FXML
     void editField(ActionEvent event) {
         //check for if the fields are invalid inputs
+        ArrayList<Integer> errors = new ArrayList<>();
+        if(nameField.getText().length() > 44) {errors.add(1);}
+        if(descField.getText().length() > 254) {errors.add(2);}
+        try{
+            LocalDateTime curTime = LocalDateTime.now();
+            waypoint w = new waypoint(AppState.getLastIndex(),nameField.getText(),descField.getText(),
+                    Double.parseDouble(xCoordField.getText()),Double.parseDouble(yCoordField.getText()),Double.parseDouble(zCoordField.getText()),
+                    curTime);
+            int index = AppState.getIndex();
+            AppState.editWaypoint(w,index);
+        }
+        catch (Exception e){
+            System.out.println("Other Problem");
+            e.printStackTrace();
+        }
     }
 
     @Override

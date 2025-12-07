@@ -41,10 +41,6 @@ public class AppState {
         return waypoints;
     }
 
-    public static List<String> getWaypointListStrings(){
-        return null;
-    }
-
     public static void addWaypoint(waypoint w){
         //add to database
     }
@@ -54,4 +50,30 @@ public class AppState {
     public static void setIndex(int index){selectedRecord = index;}
 
     public static int getIndex(){return selectedRecord;}
+    public static int getLastIndex(){
+        int tSize = -1;
+     try(Connection conn = getConnection()) {
+         String query = "SELECT COALESCE( " +
+                 "(SELECT MIN(w1.idwaypoint + 1) " +
+                 "FROM waypoint w1 " +
+                 "LEFT JOIN waypoint w2 " +
+                 "ON w1.idwaypoint + 1 = w2.idwaypoint " +
+                 "WHERE w2.idwaypoint IS NULL), " +
+                 "(SELECT 1 + IFNULL(MAX(idwaypoint), 0) FROM waypoint)) AS next_id;";
+
+         PreparedStatement ps = conn.prepareStatement(query);
+         ResultSet rs = ps.executeQuery();
+
+         if(rs.next()) {
+             tSize = rs.getInt("next_id");
+         }
+     }
+     catch (SQLException e){
+         e.printStackTrace();
+     }
+     return tSize;
+    }
+    public static void editWaypoint(waypoint w, int index){
+        //todo
+    }
 }
